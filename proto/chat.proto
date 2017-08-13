@@ -1,0 +1,11 @@
+// simple-chat.proto
+syntax = "proto3";
+package chat;
+
+message Msg {
+	string text = 1;
+}
+
+service Chat {
+	rpc connect(stream Msg) returns (stream Msg) {}
+}
