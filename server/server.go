@@ -20,11 +20,11 @@ import (
 const port = 10000
 
 type chatServer struct {
-	pool []pb.Chat_ConnectServer
+	streams []pb.Chat_ConnectServer
 }
 
 func (s *chatServer) Connect(stream pb.Chat_ConnectServer) error {
-	s.pool = append(s.pool, stream)
+	s.streams = append(s.streams, stream)
 	for {
 		msg, err := stream.Recv()
 		if err == io.EOF {
@@ -34,11 +34,13 @@ func (s *chatServer) Connect(stream pb.Chat_ConnectServer) error {
 			return err
 		}
 
-		for _, stream_client := range s.pool {
-			if err := stream_client.Send(msg); err != nil {
-				return err
+		go func() {
+			for i, stream_client := range s.streams {
+				if err := stream_client.Send(msg); err != nil {
+					s.streams = append(s.streams[:i], s.streams[i+1:]...)
+				}
 			}
-		}
+		}()
 	}
 }
 

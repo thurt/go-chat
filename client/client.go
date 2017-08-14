@@ -17,7 +17,7 @@ import (
 	"strconv"
 )
 
-const serverAddr = "127.0.0.1:10000"
+const serverAddr = "localhost:10000"
 
 var (
 	username = flag.String("username", "unknown"+strconv.Itoa(rand.Int()), "Your username is displayed to other users in chat")
